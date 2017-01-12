@@ -46,6 +46,9 @@
 	}
 
 	Toggle.prototype.render = function () {
+        if (this.options.onBeforeRender && typeof this.options.onBeforeRender === 'function') {
+            this.options.onBeforeRender(this.$element);
+        }
 		this._onstyle = 'btn-' + this.options.onstyle
 		this._offstyle = 'btn-' + this.options.offstyle
 		var size = this.options.size === 'large' ? 'btn-lg'
@@ -87,8 +90,17 @@
 	}
 
 	Toggle.prototype.toggle = function () {
-		if (this.$element.prop('checked')) this.off()
-		else this.on()
+		if (this.$element.prop('checked')) {
+			var status = 0;
+			this.off()
+		}
+		else {
+			var status = 1;
+			this.on()
+		}
+        if (this.options.onToggle && typeof this.options.onToggle === 'function') {
+            this.options.onToggle(this.$element,status);
+        }
 	}
 
 	Toggle.prototype.on = function (silent) {
@@ -96,6 +108,9 @@
 		this.$toggle.removeClass(this._offstyle + ' off').addClass(this._onstyle)
 		this.$element.prop('checked', true)
 		if (!silent) this.trigger()
+        if (this.options.onStatusOn && typeof this.options.onStatusOn === 'function') {
+            this.options.onStatusOn(this.$element);
+        }
 	}
 
 	Toggle.prototype.off = function (silent) {
@@ -103,16 +118,25 @@
 		this.$toggle.removeClass(this._onstyle).addClass(this._offstyle + ' off')
 		this.$element.prop('checked', false)
 		if (!silent) this.trigger()
+        if (this.options.onStatusOff && typeof this.options.onStatusOff === 'function') {
+            this.options.onStatusOff(this.$element);
+        }
 	}
 
 	Toggle.prototype.enable = function () {
 		this.$toggle.removeAttr('disabled')
 		this.$element.prop('disabled', false)
+        if (this.options.onEnable && typeof this.options.onEnable === 'function') {
+            this.options.onEnable(this.$element);
+        }
 	}
 
 	Toggle.prototype.disable = function () {
 		this.$toggle.attr('disabled', 'disabled')
 		this.$element.prop('disabled', true)
+        if (this.options.onDisable && typeof this.options.onDisable === 'function') {
+            this.options.onDisable(this.$element);
+        }
 	}
 
 	Toggle.prototype.update = function (silent) {
@@ -120,6 +144,9 @@
 		else this.enable()
 		if (this.$element.prop('checked')) this.on(silent)
 		else this.off(silent)
+        if (this.options.onUpdate && typeof this.options.onUpdate === 'function') {
+            this.options.onUpdate(this.$element);
+        }
 	}
 
 	Toggle.prototype.trigger = function (silent) {
